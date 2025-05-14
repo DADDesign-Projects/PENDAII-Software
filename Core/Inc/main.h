@@ -116,7 +116,7 @@ void MX_TIM6_Init(void);
 
 /* USER CODE BEGIN Private defines */
 // use to determine if need erase persistent storage (Increment if change storage structure)
-#define kNumBuild 0
+#define kNumBuild 1
 
 // Define FONTH to load resources in code (.h file).
 // Comment out #define FONTH to use resources loaded in QSPI flash. See https://github.com/DADDesign-Projects/Daisy_QSPI_Flasher  for more information.

@@ -94,6 +94,8 @@ cSwitch			cPendaUI::m_FootSwitch2;  		// Foot switch 2
 
 cMidi			cPendaUI::m_Midi;   			// MIDI manager
 
+DadMisc::cVolume cPendaUI::m_Volumes;			// Module Manager
+
 iGUIObject*	 	cPendaUI::m_pActiveObject;  	// Currently active GUI object
 
 std::stack<iGUIObject*> cPendaUI::m_MainFocusStack;// Stack of Main focus
@@ -107,7 +109,7 @@ bool 			cPendaUI::m_AudioState;
 
 // --------------------------------------------------------------------------
 // Initialize the user interface
-void cPendaUI::Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_HandleTypeDef *phuart){
+void cPendaUI::Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_HandleTypeDef *phuart, TIM_HandleTypeDef* phtim6){
 
 	m_Memory.Init();
 
@@ -239,6 +241,10 @@ void cPendaUI::Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_Handl
 	m_pActiveObject= nullptr;
 
 	m_Midi.Initialize(phuart);
+
+	// Volumes Initialization
+	m_Volumes.init(phtim6);
+
 	m_AudioState = false;
 }
 

@@ -28,7 +28,6 @@
 #include "cMemory.h"
 #include "QSPI.h"
 #include "PendaUI.h"
-#include "cVolume.h"
 #include "Effect.h"
 
 
@@ -113,9 +112,6 @@ DadQSPI::cQSPI_PersistentStorage 			  __PersistentStorage;
 // UI Object Manager
 DadUI::cUIObjectManager __UIObjManager;
 
-// Manages the digital Dry/Wet mix control
-DadMisc::cVolume __Volumes;
-
 // Effect Manager
 EFFECT		__Effect;
 
@@ -150,7 +146,6 @@ ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
     	// Advance buffer pointers (post-increment)
     	pOut++;
     	pIn++;
-
     }
 
     // Increment cycle counter for visual feedback:
@@ -328,10 +323,7 @@ int main(void)
   pBack->eraseLayer(DadGFX::sColor(0,0,0,255));
 
   // GUI Initializations
-  DadUI::cPendaUI::Init(EFFECT_NAME, EFFECT_VERSION, &huart1);
-
-  // Volumes Initialization
-  __Volumes.init(&htim6);
+  DadUI::cPendaUI::Init(EFFECT_NAME, EFFECT_VERSION, &huart1, &htim6);
 
   // Effect Initialization
   __Effect.Initialize();

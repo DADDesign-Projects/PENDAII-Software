@@ -77,13 +77,6 @@ void cDelay::Initialize(){
 	m_ModulationSpeed.Init(1.5f, 0.5f, 10.0f, 0.5f, 0.05f, SpeedChange,
 	                       (uint32_t)this, 0.5f * UI_RT_SAMPLING_RATE, 28);
 
-
-	m_InputVolume.Init(127, 0.0f, 255.0f, 10.0f, 1.0f, InputChange,
-	                       (uint32_t)this, 0, 29);
-
-	m_DryVolume.Init(127, 0.0f, 255.0f, 10.0f, 1.0f, DryChange,
-	                       (uint32_t)this, 0, 30);
-
 	// Parameter Views Setup -----------------------------------------------------------------
 
 	m_TimeView.Init(&m_Time, "Time", "Time", "s", "Sec.");
@@ -109,8 +102,6 @@ void cDelay::Initialize(){
 	m_TrebleView.Init(&m_Treble, "Treble", "Treble", "%", "%");
 	m_ModulationDeepView.Init(&m_ModulationDeep, "Deep", "Mod. Deep", "%", "%");
 	m_ModulationSpeedView.Init(&m_ModulationSpeed, "Speed", "Mod. Speed", "Hz", "Hz");
-	m_InputVolumeView.Init(&m_InputVolume, "Input", "Input Vol.", "", "");
-	m_DryVolumeView.Init(&m_DryVolume, "Dry", "Dry Volume", "", "");
 
 	// Organize parameters into menu groups --------------------------------------------------
 
@@ -118,17 +109,17 @@ void cDelay::Initialize(){
 	m_ItemDelay2Menu.Init(&m_MixDelay2View, &m_Repeat2View, &m_SubDelay2View);
 	m_ItemToneMenu.Init(&m_BassView, nullptr, &m_TrebleView);
 	m_ItemLFOMenu.Init(&m_ModulationDeepView, nullptr, &m_ModulationSpeedView);
-	m_ItemVolumesMenu.Init(&m_InputVolumeView, nullptr, &m_DryVolumeView);
+	m_ItemInputVolume.Init();
 	m_ItemMenuMemory.Init();
 
 	// Build Main Menu -----------------------------------------------------------------------
 
 	m_Menu.Init();
-	m_Menu.addMenuItem(&m_ItemVolumesMenu, "Volumes");
 	m_Menu.addMenuItem(&m_ItemDelayMenu, "Delay1");
 	m_Menu.addMenuItem(&m_ItemDelay2Menu, "Delay2");
 	m_Menu.addMenuItem(&m_ItemToneMenu, "Tone");
 	m_Menu.addMenuItem(&m_ItemLFOMenu, "LFO");
+	m_Menu.addMenuItem(&m_ItemInputVolume, "Input");
 	m_Menu.addMenuItem(&m_ItemMenuMemory, "Mem.");
 
 	// Tap tempo sync (from footswitch)
@@ -157,13 +148,14 @@ void cDelay::Initialize(){
 	m_Delay2LineLeft.Initialize(__Delay2BufferLeft, DELAY_BUFFER_SIZE);
 	m_Delay2LineLeft.Clear();
 
-	__Volumes.MuteOff();
+	DadUI::cPendaUI::m_Volumes.MuteOff();
 }
 
 // --------------------------------------------------------------------------
 // Main audio processing function
 void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut){
 	m_LFO.Step(); // Advance LFO phase
+	m_ItemInputVolume.Process(pIn);
 
 	// Compute modulated delay time
 	float Delay = m_Time * SAMPLING_RATE * (1 - (m_LFO.getTriangleValue() * m_ModulationDeep * 0.00008f));
@@ -262,17 +254,5 @@ float cDelay::getLogFrequency(float normValue, float freqMin, float freqMax) con
 	float logFreq = logMin + normValue * (logMax - logMin);
 	return std::exp(logFreq);
 };
-
-// --------------------------------------------------------------------------
-// Input volume change callback
-void cDelay::InputChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData){
-	__Volumes.Volume1Change(pParameter->getValue(), pParameter->getValue());
-}
-
-// --------------------------------------------------------------------------
-// Dry volume change callback
-void cDelay::DryChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData){
-	__Volumes.Volume2Change(pParameter->getValue(), pParameter->getValue());
-}
 
 } // namespace DadEffect

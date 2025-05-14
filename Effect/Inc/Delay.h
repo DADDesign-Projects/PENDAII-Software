@@ -14,9 +14,8 @@
 #include "cDCO.h"
 #include "BiquadFilter.h"
 #include "cDelayLine.h"
-#include "cVolume.h"
+#include "UISystem.h"
 
-extern DadMisc::cVolume __Volumes;
 namespace DadEffect {
 
 //***********************************************************************************
@@ -72,8 +71,6 @@ protected:
 	DadUI::cParameter m_ModulationDeep; // LFO depth (modulates delay time)
 	DadUI::cParameter m_ModulationSpeed;// LFO rate
 	DadUI::cParameter m_ModulationRatio;// LFO waveform ratio (may be fixed)
-	DadUI::cParameter m_InputVolume;	// Input Volume
-	DadUI::cParameter m_DryVolume;      // Dry Volume
 
 	// UI views (visual representations of the parameters)
 	DadUI::cParameterNumNormalView m_TimeView;
@@ -85,15 +82,13 @@ protected:
 	DadUI::cParameterNumNormalView m_TrebleView;
 	DadUI::cParameterNumNormalView m_ModulationDeepView;
 	DadUI::cParameterNumNormalView m_ModulationSpeedView;
-	DadUI::cParameterNumNormalView m_InputVolumeView;
-	DadUI::cParameterNumNormalView m_DryVolumeView;
 
 	// UI parameter groups
 	DadUI::cUIParameters m_ItemDelayMenu;
 	DadUI::cUIParameters m_ItemDelay2Menu;
 	DadUI::cUIParameters m_ItemToneMenu;
 	DadUI::cUIParameters m_ItemLFOMenu;
-	DadUI::cUIParameters m_ItemVolumesMenu;
+	DadUI::cUIImputVolume m_ItemInputVolume;
 	DadUI::cUIMemory     m_ItemMenuMemory;  // Persistent UI memory
 
 	// Main user interface menu

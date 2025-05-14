@@ -13,6 +13,7 @@
 #include "cSwitch.h"
 #include "UIDefines.h"
 #include "Midi.h"
+#include "cVolume.h"
 #include <vector>
 #include <stack>
 
@@ -44,7 +45,7 @@ public:
 
     // --------------------------------------------------------------------------
     // Initialize the user interface
-	static void Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_HandleTypeDef *phuart);
+	static void Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_HandleTypeDef *phuart, TIM_HandleTypeDef* phtim6);
 
 	// --------------------------------------------------------------------------
 	// Set the active GUI object
@@ -136,6 +137,8 @@ public:
     static DadQSPI::cMemory	m_Memory;    			// Slot memory manager
 
     static bool				m_AudioState;			// Audio State On/Off
+
+    static DadMisc::cVolume	m_Volumes;				// Volume Manager
 
 protected:
 
