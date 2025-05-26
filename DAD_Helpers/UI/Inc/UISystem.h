@@ -21,13 +21,6 @@ namespace DadUI {
 #define VU_WIDTH 216               // Width of the VU meter in pixels
 #define MIN_DB -30.0f              // Minimum dB level displayed on meter
 
-// Input channel modes
-enum InputMode {
-    Left = 0,     // Left channel only
-    Right = 1,    // Right channel only
-    Stereo = 2    // Stereo (both channels)
-};
-
 //***********************************************************************************
 // class cUIVuMeterView
 // Description: Implements a VU meter visualization for audio levels
@@ -154,24 +147,14 @@ public:
     //   CallbackUserData - Pointer to this instance
     static void VolumePanChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData);
 
-    // ------------------------------------------------------------------------------
-    // Function: getMode
-    // Description: Returns the current input mode
-    // Returns: Current InputMode (Left, Right, or Stereo)
-    inline InputMode getMode() {
-        return (InputMode)(int) m_InputMode.getValue();
-    }
-
 protected:
     // ------------------------------------------------------------------------------
     // Member variables
     DadUI::cParameter           m_InputVolume;		// Volume parameter
     DadUI::cParameter           m_InputPanning;     // Pan parameter
-    DadUI::cParameter           m_InputMode;        // Input mode parameter
 
     cParameterNumNormalView     m_InputVolumeView;  // Volume parameter view
     cParameterNumLeftRightView  m_InputPanningView; // Pan parameter view
-    cParameterDiscretView       m_InputModeView;    // Mode parameter view
 
     cUIVuMeterView              m_UIVuMeterView;    // VU meter visualization
 };

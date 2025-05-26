@@ -158,7 +158,7 @@ void cPendaUI::Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_Handl
 
     m_pBackLayer->setFont(m_pFont_XLB);
     m_pBackLayer->setCursor(96, 5);
-    m_pBackLayer->drawText("PENDA");
+    m_pBackLayer->drawText("PENDA II");
 
     m_pBackLayer->setFont(m_pFont_L);
     m_pBackLayer->setCursor(101, 65);

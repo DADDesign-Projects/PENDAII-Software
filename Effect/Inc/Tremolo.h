@@ -14,6 +14,7 @@
 #include "Parameter.h"
 #include "cDCO.h"
 #include "cDelayLine.h"
+#include "UISystem.h"
 
 namespace DadEffect {
 
@@ -39,7 +40,7 @@ public:
 	// --------------------------------------------------------------------------
 	// Audio processing function
 	// Applies tremolo and vibrato to the input audio buffer.
-	ITCM void Process(AudioBuffer *pIn, AudioBuffer *pOut);
+	ITCM void Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff);
 
 	// --------------------------------------------------------------------------
 	// UI Callbacks
@@ -68,9 +69,10 @@ protected:
 	DadUI::cParameterNumLeftRightView   m_LFORatioView;
 
 	// UI parameter groupings (menu sections)
-	DadUI::cUIParameters m_ItemTremoloMenu;   // Group for tremolo/vibrato parameters
-	DadUI::cUIParameters m_ItemLFOMenu;       // Group for LFO shape and ratio
-	DadUI::cUIMemory     m_ItemMenuMemory;    // Persistent parameter storage
+	DadUI::cUIParameters 	m_ItemTremoloMenu;   // Group for tremolo/vibrato parameters
+	DadUI::cUIParameters 	m_ItemLFOMenu;       // Group for LFO shape and ratio
+	DadUI::cUIImputVolume 	m_ItemInputVolume;
+	DadUI::cUIMemory     	m_ItemMenuMemory;    // Persistent parameter storage
 
 	// Main menu container
 	DadUI::cUIMenu m_Menu;
@@ -83,7 +85,8 @@ protected:
 	// DSP Components
 	// ==============================================================================
 
-	DadDSP::cDCO m_LFO;                 // Low-Frequency Oscillator for modulation
+	DadDSP::cDCO 	   m_LFO;                 // Low-Frequency Oscillator for modulation
+	bool			   m_MuteOff;	   		  // Memorize mute state
 
 	// Delay lines for vibrato (stereo processing)
 	DadDSP::cDelayLine m_ModulationLineRight;

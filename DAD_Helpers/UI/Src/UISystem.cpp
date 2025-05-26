@@ -213,23 +213,16 @@ void cUIImputVolume::Init(){
 	// Initialize parameters with ranges and callbacks
 	m_InputVolume.Init(50.0f, 0.0f, 100.0f, 10.0f, 1.0f, VolumePanChange, (uint32_t) this);
 	m_InputPanning.Init(0.0f, -100.0f, +100.0f, 5.0f, 1.0f, VolumePanChange, (uint32_t) this);
-	m_InputMode.Init(0.0f, 0.0f, 0.0f, 1, 1);
 
 	// Initialize parameter views
 	m_InputVolumeView.Init(&m_InputVolume, "Input Vol.", "Input Volume", "%", "%");
 	m_InputPanningView.Init(&m_InputPanning, "Pan", "Input Panning", "%", "%");
-	m_InputModeView.Init(&m_InputMode, "Mode", "InputMode");
-
-	// Add mode options
-	m_InputModeView.AddDiscreteValue("Left", "Left Input");
-	m_InputModeView.AddDiscreteValue("Right", "Right Input");
-	m_InputModeView.AddDiscreteValue("Stereo", "Stereo Input");
 
 	// Initialize VU meter
 	m_UIVuMeterView.Init();
 
 	// Initialize base class with parameter views
-	cUIParameters::Init(&m_InputVolumeView, &m_InputPanningView, &m_InputModeView);
+	cUIParameters::Init(&m_InputVolumeView, nullptr, &m_InputPanningView);
 }
 
 // ------------------------------------------------------------------------------

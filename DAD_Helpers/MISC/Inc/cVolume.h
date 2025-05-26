@@ -53,9 +53,24 @@ public:
 	// Sets Volume2 (left/right) and transmits it
 	void Volume2Change(float VolumeLeft, float VolumeRight);
 
+	float MixDryWet(float Mix);
+
 	void MuteOn();
 
 	void MuteOff();
+
+	inline uint8_t getVol1Left(){
+		return m_Volumes.Vol1;
+	}
+	inline uint8_t getVol1Right(){
+		return m_Volumes.Vol2;
+	}
+	inline uint8_t getVol2Left(){
+		return m_Volumes.Vol3;
+	}
+	inline uint8_t getVol2Right(){
+		return m_Volumes.Vol4;
+	}
 
 	// -----------------------------------------------------------------------
 	// Internal Data

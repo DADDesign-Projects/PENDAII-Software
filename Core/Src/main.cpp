@@ -134,16 +134,10 @@ ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
             __MemOnOff = OnOff; // Update state if crossing threshold
         }
 
-        // Apply processing if active
-        if (__MemOnOff) {
-        	__Effect.Process(pIn, pOut);
-        }else{
-        	AudioBuffer ZeroIn;
-        	ZeroIn.Right = 0;
-        	ZeroIn.Left = 0;
-        	__Effect.Process(&ZeroIn, pOut);
-        }
-    	// Advance buffer pointers (post-increment)
+        // Process effect
+        __Effect.Process(pIn, pOut, __MemOnOff);
+
+        // Advance buffer pointers (post-increment)
     	pOut++;
     	pIn++;
     }
@@ -340,7 +334,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
     /* USER CODE END WHILE */
@@ -645,7 +638,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

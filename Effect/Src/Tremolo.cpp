@@ -71,6 +71,7 @@ void cTremolo::Initialize(){
 
 	m_ItemTremoloMenu.Init(&m_TremoloDeepView, &m_VibratoDeepView, &m_FreqView);
 	m_ItemLFOMenu.Init(&m_LFOShapeView, &m_LFORatioView, &m_FreqView);
+	m_ItemInputVolume.Init();
 	m_ItemMenuMemory.Init();
 
 	// ---------------- Main Menu Configuration ----------------
@@ -78,6 +79,7 @@ void cTremolo::Initialize(){
 	m_Menu.Init();
 	m_Menu.addMenuItem(&m_ItemTremoloMenu, "Main");
 	m_Menu.addMenuItem(&m_ItemLFOMenu, "LFO");
+	m_Menu.addMenuItem(&m_ItemInputVolume, "Input");
 	m_Menu.addMenuItem(&m_ItemMenuMemory, "Mem.");
 
 	// Sync with footswitch for tap-tempo
@@ -95,12 +97,25 @@ void cTremolo::Initialize(){
 
 	m_ModulationLineLeft.Initialize(__ModulationBufferLeft, DELAY_BUFFER_SIZE);
 	m_ModulationLineLeft.Clear();
+
+	DadUI::cPendaUI::m_Volumes.MuteOff();
+	m_MuteOff = true;
 }
 
 // --------------------------------------------------------------------------
 // Audio processing routine: applies volume and pitch modulation
-void cTremolo::Process(AudioBuffer *pIn, AudioBuffer *pOut){
+void cTremolo::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	m_LFO.Step(); // Update LFO phase
+	m_ItemInputVolume.Process(pIn);		// Input volume VU-Meter
+
+	if(OnOff != m_MuteOff){
+		if(true == OnOff){
+			DadUI::cPendaUI::m_Volumes.MuteOff();
+		}else{
+			DadUI::cPendaUI::m_Volumes.MuteOn();
+		}
+		OnOff = m_MuteOff;
+	}
 
 	float VolumeModulation = 0.0f;
 	switch(static_cast<uint32_t>(m_LFOShape.getValue())){
