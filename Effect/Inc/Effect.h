@@ -17,7 +17,7 @@
 #define EFFECT_NAME "Delay"
 #define EFFECT_VERSION "Version 1.0"
 #endif
-
+/*
 // Configuring the PENDA Delay
 #ifdef PENDA_TREMOLO
 #include "Tremolo.h"
@@ -26,3 +26,4 @@
 #define EFFECT_NAME "Tremolo"
 #define EFFECT_VERSION "Version 1.0"
 #endif
+*/
