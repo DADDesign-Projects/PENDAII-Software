@@ -269,7 +269,7 @@ void cParameterNumNormalView::drawDynFormView(DadGFX::cLayer* pDynLayer){
 
     // Render the parameter's current value as text
     char Buffer[30];
-	snprintf(Buffer, sizeof(Buffer), "%s %s", ValueToString().c_str(), m_LongUnit.c_str());
+	snprintf(Buffer, sizeof(Buffer), "%s %s", ValueToString().c_str(), m_ShortUnit.c_str());
     uint16_t TextWitdh = pDynLayer->getTextWidth(Buffer); 	// Measure the text width
     pDynLayer->setCursor((PARAM_WIDTH - TextWitdh)/2,
     					  PARAM_HEIGHT - ((PARAM_VAL_HEIGHT + pDynLayer->getTextHeight())/2)); // Position the text
@@ -334,7 +334,7 @@ void cParameterNumLeftRightView::drawDynFormView(DadGFX::cLayer* pDynLayer){
     // Render the parameter's current value as text
     // Render the parameter's current value as text
     char Buffer[30];
-	snprintf(Buffer, sizeof(Buffer), "%s %s", ValueToString().c_str(), m_LongUnit.c_str());
+	snprintf(Buffer, sizeof(Buffer), "%s %s", ValueToString().c_str(), m_ShortUnit.c_str());
     uint16_t TextWitdh = pDynLayer->getTextWidth(Buffer); 	// Measure the text width
     pDynLayer->setCursor((PARAM_WIDTH - TextWitdh)/2,
     					  PARAM_HEIGHT - ((PARAM_VAL_HEIGHT + pDynLayer->getTextHeight())/2)); // Position the text
