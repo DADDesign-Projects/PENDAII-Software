@@ -1,5 +1,6 @@
 # PENDAII-Software
 PENDAII-Software is the new version of the software framework specifically designed to take full advantage of the PENDAII stereo hardware.
+![Image1](Media/PENDAII.jpg)
 
 ## Introduction
 PENDAII Software is a collection of audio effects built on an advanced framework, specifically designed for the PENDAII Hardware platform ([GitHub Link](https://github.com/DADDesign-Projects/PENDAII-Hardware)). You can use this framework to easily develop your own high-quality audio effect pedals, focusing entirely on signal processing while the framework handles all hardware complexities. 
