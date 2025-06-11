@@ -65,11 +65,15 @@ public:
 
 	// --------------------------------------------------------------------------
 	// Save UI state
-	static void Save(DadQSPI::cSerialize &Serializer);
+	static void Save(DadQSPI::cSerialize &Serializer, uint32_t SerializeID = 0);
 
 	// --------------------------------------------------------------------------
 	// Restore UI state
-	static void Restore(DadQSPI::cSerialize &Serializer);
+	static void Restore(DadQSPI::cSerialize &Serializer, uint32_t SerializeID = 0);
+
+	// ------------------------------------------------------------------------
+    // // Get if an the object is modified
+	static bool isDirty(uint32_t SerializeID = 0);
 
     // --------------------------------------------------------------------------
 	// Request focus for an object
@@ -134,8 +138,6 @@ public:
 
     static cMidi			m_Midi;					// MIDI manager
 
-    static DadQSPI::cMemory	m_Memory;    			// Slot memory manager
-
     static bool				m_AudioState;			// Audio State On/Off
 
     static DadMisc::cVolume	m_Volumes;				// Volume Manager
@@ -143,7 +145,6 @@ public:
 protected:
 
 	static iGUIObject*	 	m_pActiveObject;  		// Currently active GUI object
-
 
     static std::stack<iGUIObject*> m_MainFocusStack; // Stack of Main focus
 };
@@ -167,11 +168,11 @@ public:
     virtual void OnMainFocusLost(){};
     virtual void OnMainFocusGained(){};
 
-    void Save(DadQSPI::cSerialize &Serializer) override {};    // Serialize the object
-    void Restore(DadQSPI::cSerialize &Serializer) override {}; // Deserialize the object
+    virtual bool isDirty(uint32_t SerializeID){return false;};  		// Get if the object is modified
+
+    void Save(DadQSPI::cSerialize &Serializer, uint32_t SerializeID) override {};    // Serialize the object
+    void Restore(DadQSPI::cSerialize &Serializer, uint32_t SerializeID) override {}; // Deserialize the object
 
 };
-
-
 
 } // DadUI

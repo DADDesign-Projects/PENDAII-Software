@@ -116,7 +116,22 @@ void MX_TIM6_Init(void);
 
 /* USER CODE BEGIN Private defines */
 // use to determine if need erase persistent storage (Increment if change storage structure)
-#define kNumBuild 3
+
+// =====** DAD **=================================================================
+
+// PENDA  Hardware
+//#define PENDAI
+
+// PENDA II Hardware
+#define PENDAII
+
+// use to determine if need erase persistent storage (Increment if change storage structure)
+#define kNumBuild 1
+
+// Define MONITOR to monitor the effect loop execution time.
+#ifdef DEBUG
+#define MONITOR
+#endif
 
 // Define FONTH to load resources in code (.h file).
 // Comment out #define FONTH to use resources loaded in QSPI flash. See https://github.com/DADDesign-Projects/Daisy_QSPI_Flasher  for more information.
@@ -142,6 +157,8 @@ struct AudioBuffer{
 	float Left;
 };
 extern HAL_StatusTypeDef StartAudio();
+
+// =====** END DAD **=================================================================
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

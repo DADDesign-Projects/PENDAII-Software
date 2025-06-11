@@ -28,6 +28,7 @@
 #include "cMemory.h"
 #include "QSPI.h"
 #include "PendaUI.h"
+#include "cMonitor.h"
 #include "Effect.h"
 
 
@@ -112,6 +113,14 @@ DadQSPI::cQSPI_PersistentStorage 			  __PersistentStorage;
 // UI Object Manager
 DadUI::cUIObjectManager __UIObjManager;
 
+// Monitor
+#ifdef MONITOR
+DadMisc::cMonitor __Monitor;
+volatile float CPULoad;
+volatile float EffectTime;
+volatile float Frequency;
+#endif
+
 // Effect Manager
 EFFECT		__Effect;
 
@@ -125,7 +134,9 @@ uint32_t __CT=0; 			// Cycle counter
 
 // ITCM: Optimized for fast execution (placed in Instruction Tightly Coupled Memory)
 ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
-    // Get the current ON/OFF state from the UI (real-time safe)
+	__Monitor.startMonitoring();
+
+	// Get the current ON/OFF state from the UI (real-time safe)
     bool OnOff = DadUI::cPendaUI::RTProcess();
     // Process each sample in the audio buffer
     for (size_t i = 0; i < AUDIO_BUFFER_SIZE; i++) {
@@ -144,6 +155,8 @@ ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
 
     // Increment cycle counter for visual feedback:
     __CT++;
+
+    __Monitor.stopMonitoring();
 }
 
 // ------------------------------------------------------------------------
@@ -251,7 +264,9 @@ int main(void)
 
   SCB_EnableICache(); 			// Enable I-Cache
   SCB_EnableDCache(); 			// Enable D-Cache
-
+#ifdef MONITOR
+  __Monitor.Init();
+#endif
   // Revision configuration
   MX_DMA_Init();
   if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(Rev5_GPIO_Port, Rev5_Pin)){
@@ -279,7 +294,12 @@ int main(void)
 
   // Display Initializations
   INIT_DISPLAY(__Display, &hspi1);
+#ifdef PENDAI
+  __Display.setOrientation(Rotation::Degre_90);
+#elif defined(PENDAII)
   __Display.setOrientation(Rotation::Degre_270);
+#endif
+
   DadGFX::cLayer *pBack = ADD_LAYER(Back, 0,0,1);
   DadGFX::cFont Font(FONTL);
 
@@ -348,7 +368,12 @@ int main(void)
     	  __CT =0;
     	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
       }
-
+#ifdef MONITOR
+      CPULoad = __Monitor.getCPULoad_percent();
+      EffectTime = __Monitor.getAverageExecutionTime_us();
+      Frequency = __Monitor.getAverageFrequency_Hz();
+      __Monitor.reset();
+#endif
 	  HAL_Delay(100);
 
 // ===** End DAD **=================================================================

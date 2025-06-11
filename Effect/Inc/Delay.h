@@ -16,6 +16,12 @@
 #include "cDelayLine.h"
 #include "UISystem.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
+constexpr uint32_t DelaySerializeID ='Del0'; // SerializeID for Delay Effect
+#pragma GCC diagnostic pop
+
+
 namespace DadEffect {
 
 //***********************************************************************************

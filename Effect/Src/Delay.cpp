@@ -69,41 +69,40 @@ void cDelay::Initialize(){
 
 	// Delay 1 ----------------------
 	m_Time.Init(0.450f, 0.150f, DELAY_MAX_TIME, 0.05f, 0.01f, nullptr, 0,
-	            5.0f * UI_RT_SAMPLING_RATE, 20);
+	            5.0f * UI_RT_SAMPLING_RATE, 20, DelaySerializeID);
 
 	// Feedback for delay 1
 	m_Repeat.Init(30.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
-	            0.2f * UI_RT_SAMPLING_RATE, 21);
+	            0.2f * UI_RT_SAMPLING_RATE, 21, DelaySerializeID);
 
 	// Mix delay 1
 	m_Mix.Init(10.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
-					 1.0f * UI_RT_SAMPLING_RATE, 22);
+					 1.0f * UI_RT_SAMPLING_RATE, 22, DelaySerializeID);
 	// Delay 2 ----------------------
 	// Subdivision of delay1
-	m_SubDelay.Init(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, nullptr, 0,
-            0, 23);
+	m_SubDelay.Init(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, nullptr, 0, 0, 23, DelaySerializeID);
 
 	// Feedback level for delay 2
 	m_RepeatDelay2.Init(0.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
-            0.2f * UI_RT_SAMPLING_RATE, 24);
+            0.2f * UI_RT_SAMPLING_RATE, 24, DelaySerializeID);
 
 	// blend of delay 1 and delay 2
 	m_BlendD1D2.Init(0.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
-			 1.0f * UI_RT_SAMPLING_RATE, 25);
+			 1.0f * UI_RT_SAMPLING_RATE, 25, DelaySerializeID);
 
 	// Tone controls -----------------
 	m_Bass.Init(50.0f, 0.0f, 100.0f, 5.0f, 1.0f, BassChange, (uint32_t)this,
-	            0.2f * UI_RT_SAMPLING_RATE, 26);
+	            0.2f * UI_RT_SAMPLING_RATE, 26, DelaySerializeID);
 
 	m_Treble.Init(50.0f, 0.0f, 100.0f, 5.0f, 1.0f, TrebleChange, (uint32_t)this,
-	              0.2f * UI_RT_SAMPLING_RATE, 27);
+	              0.2f * UI_RT_SAMPLING_RATE, 27, DelaySerializeID);
 
 	// Modulation depth and speed
 	m_ModulationDeep.Init(10.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
-	                      1.0f * UI_RT_SAMPLING_RATE, 28);
+	                      1.0f * UI_RT_SAMPLING_RATE, 28, DelaySerializeID);
 
 	m_ModulationSpeed.Init(1.5f, 0.5f, 10.0f, 0.5f, 0.05f, SpeedChange,
-	                       (uint32_t)this, 0.5f * UI_RT_SAMPLING_RATE, 29);
+	                       (uint32_t)this, 0.5f * UI_RT_SAMPLING_RATE, 29, DelaySerializeID);
 
 	// Parameter Views Setup -----------------------------------------------------------------
 	m_TimeView.Init(&m_Time, "Time", "Time", "s", "second");
@@ -134,8 +133,11 @@ void cDelay::Initialize(){
 	m_ModulationSpeedView.Init(&m_ModulationSpeed, "Speed", "Mod. Speed", "Hz", "Hz");
 
 	// Organize parameters into menu groups --------------------------------------------------
+#ifdef PENDAI
+	m_ItemDelay1Menu.Init(&m_TimeView, nullptr, &m_RepeatView);
+#elif defined(PENDAII)
 	m_ItemDelay1Menu.Init(&m_TimeView, &m_RepeatView, &m_MixView);
-
+#endif
 	m_ItemDelay2Menu.Init(&m_SubDelayView, &m_RepeatDelay2View, &m_BlendD1D2View);
 
 	m_ItemToneMenu.Init(&m_BassView, nullptr, &m_TrebleView);
@@ -143,7 +145,7 @@ void cDelay::Initialize(){
 	m_ItemLFOMenu.Init(&m_ModulationDeepView, nullptr, &m_ModulationSpeedView);
 
 	m_ItemInputVolume.Init();
-	m_ItemMenuMemory.Init();
+	m_ItemMenuMemory.Init(DelaySerializeID);
 
 	// Build Main Menu -----------------------------------------------------------------------
 	m_Menu.Init();
@@ -279,7 +281,10 @@ void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 
 	OutRight = ((OutRight * gain1) + (Out2Right * gain2));
 	OutLeft  = ((OutLeft * gain1) + (Out2Left * gain2));
-
+#ifdef PENDAI
+	pOut->Right = OutRight;
+	pOut->Left  = OutLeft;
+#elif defined(PENDAII)
 	if( (m_MemMixDelay != m_Mix) ||
 		(m_MemVol1Left != DadUI::cPendaUI::m_Volumes.getVol1Left())||
 		(m_MemVol1Right != DadUI::cPendaUI::m_Volumes.getVol1Right())
@@ -290,6 +295,7 @@ void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 
 	pOut->Right = OutRight * m_GainWet;
 	pOut->Left  = OutLeft * m_GainWet;
+#endif
 }
 
 
