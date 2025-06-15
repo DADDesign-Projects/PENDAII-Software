@@ -6,8 +6,9 @@
 // Copyright(c) 2025 Dad Design.
 //====================================================================================
 
-#define PENDA_DELAY
-//#define PENDA_TREMOLO
+//#define PENDA_DELAY
+#define PENDA_TREMOLO
+
 
 // Configuring the PENDA Delay
 #ifdef PENDA_DELAY
@@ -16,7 +17,7 @@
 #define EFFECT_NAME "Delay"
 #define EFFECT_VERSION "Version 1.0"
 #endif
-/*
+
 // Configuring the PENDA Delay
 #ifdef PENDA_TREMOLO
 #include "Tremolo.h"
@@ -24,4 +25,4 @@
 #define EFFECT_NAME "Tremolo"
 #define EFFECT_VERSION "Version 1.0"
 #endif
-*/
+
