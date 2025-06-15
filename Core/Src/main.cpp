@@ -134,7 +134,9 @@ uint32_t __CT=0; 			// Cycle counter
 
 // ITCM: Optimized for fast execution (placed in Instruction Tightly Coupled Memory)
 ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
+	#ifdef MONITOR
 	__Monitor.startMonitoring();
+	#endif
 
 	// Get the current ON/OFF state from the UI (real-time safe)
     bool OnOff = DadUI::cPendaUI::RTProcess();
@@ -156,7 +158,9 @@ ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
     // Increment cycle counter for visual feedback:
     __CT++;
 
+	#ifdef MONITOR
     __Monitor.stopMonitoring();
+	#endif
 }
 
 // ------------------------------------------------------------------------
