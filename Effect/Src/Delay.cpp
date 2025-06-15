@@ -289,7 +289,7 @@ void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 		(m_MemVol1Left != DadUI::cPendaUI::m_Volumes.getVol1Left())||
 		(m_MemVol1Right != DadUI::cPendaUI::m_Volumes.getVol1Right())
 	   ){
-		m_GainWet = DadUI::cPendaUI::m_Volumes.MixDryWet(m_Mix / 100);
+		m_GainWet = DadUI::cPendaUI::m_Volumes.MixDryWet(m_Mix);
 		m_MemMixDelay =  m_Mix;
 	}
 

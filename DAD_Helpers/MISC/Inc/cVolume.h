@@ -74,10 +74,12 @@ public:
 
 	// -----------------------------------------------------------------------
 	// Internal Data
-
 	static DadMisc::cSoftSPI 	m_SoftSPI;       // Software SPI instance
+
 protected:
 	VolumeControl      			m_Volumes;       // Union holding 4 volume values
+	float 						m_MixDryWet;
+
 };
 
 } // namespace DadMisc
