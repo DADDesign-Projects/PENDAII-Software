@@ -127,7 +127,7 @@ EFFECT		__Effect;
 // ------------------------------------------------------------------------
 // AudioCallback - Processes audio in real-time (called by the audio engine)
 // ------------------------------------------------------------------------
-bool __MemOnOff = false; 	// Global state variable: Tracks whether audio processing is active
+eOnOff __MemOnOff = Off; 	// Global state variable: Tracks whether audio processing is active
 uint32_t __CT=0; 			// Cycle counter
 							// - Used in main loop to blink an activity LED
  	 	 	 	 	 	 	// - The LED blink rate indicates proper callback execution
@@ -139,12 +139,13 @@ ITCM void AudioCallback(AudioBuffer *pIn, AudioBuffer *pOut) {
 	#endif
 
 	// Get the current ON/OFF state from the UI (real-time safe)
-    bool OnOff = DadUI::cPendaUI::RTProcess();
+    eOnOff OnOff = DadUI::cPendaUI::RTProcess();
     // Process each sample in the audio buffer
     for (size_t i = 0; i < AUDIO_BUFFER_SIZE; i++) {
     	// Detect state change only when audio is near silence (avoid clicks)
         if ((OnOff != __MemOnOff) && (fabs(pIn->Right + pIn->Left) < 0.001f)) {
             __MemOnOff = OnOff; // Update state if crossing threshold
+            DadUI::cPendaUI::m_Volumes.OnOffChange(__MemOnOff);
         }
 
         // Process effect
@@ -710,7 +711,7 @@ void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 2400-1;
+  htim6.Init.Prescaler = 300-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 10-1;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;

@@ -100,7 +100,7 @@ iGUIObject*	 	cPendaUI::m_pActiveObject;  	// Currently active GUI object
 
 std::stack<iGUIObject*> cPendaUI::m_MainFocusStack;// Stack of Main focus
 
-bool 			cPendaUI::m_AudioState;
+eOnOff 			cPendaUI::m_AudioState;
 
 
 // --------------------------------------------------------------------------
@@ -243,7 +243,7 @@ void cPendaUI::Init(const char* pSplashTxt1, const char* pSplashTxt2, UART_Handl
 	// Volumes Initialization
 	m_Volumes.init(phtim6);
 
-	m_AudioState = false;
+	m_AudioState = Off;
 }
 
 // --------------------------------------------------------------------------
@@ -270,7 +270,7 @@ void cPendaUI::Update(){
 
 // --------------------------------------------------------------------------
 // Real-time processing of encoders, switches and GUI objects
-bool cPendaUI::RTProcess() {
+eOnOff cPendaUI::RTProcess() {
 	m_FootSwitch1.Debounce();  // Debounce foot switch 1
 	m_FootSwitch2.Debounce();  // Debounce foot switch 2
 

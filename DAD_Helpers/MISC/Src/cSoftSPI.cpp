@@ -48,6 +48,11 @@ void cSoftSPI::TimerCallback() {
 		// Do nothing if transmission is stopped
 		return;
 		break;
+	case eTransState::Start:
+		// Start transmission
+		m_TransState = eTransState::Cs_Down;
+		return;
+		break;
 	case eTransState::Cs_Down:
 		// Lower chip select to start transmission
 		ResetPIN(CS);
@@ -92,7 +97,7 @@ void cSoftSPI::TimerCallback() {
 		}else{
 			m_TransState = eTransState::Stop;
 			// Stop the timer interrupt
-			HAL_TIM_Base_Stop_IT(m_phtim);
+			//HAL_TIM_Base_Stop_IT(m_phtim);
 		}
 		break;
 	}
@@ -107,8 +112,8 @@ void cSoftSPI::Transmit(uint32_t Data) {
 		m_ValidNextData = 1;
 	}else{
 		m_Data = Data;           				// Store the data to send
-		m_TransState = eTransState::Cs_Down; 	// Begin transmission
-		HAL_TIM_Base_Start_IT(m_phtim); 		// Start timer interrupts
+		m_TransState = eTransState::Start; 		// Begin transmission
+		//HAL_TIM_Base_Start_IT(m_phtim); 		// Start timer interrupts
 	}
 	__enable_irq();
 }

@@ -57,7 +57,7 @@ public:
 
     // --------------------------------------------------------------------------
 	// Real-time processing
-	static bool RTProcess();
+	static eOnOff RTProcess();
 
 	// --------------------------------------------------------------------------
 	// Force to draw the dynamic view
@@ -138,7 +138,7 @@ public:
 
     static cMidi			m_Midi;					// MIDI manager
 
-    static bool				m_AudioState;			// Audio State On/Off
+    static eOnOff			m_AudioState;			// Audio State On/Off
 
     static DadMisc::cVolume	m_Volumes;				// Volume Manager
 

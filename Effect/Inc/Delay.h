@@ -54,6 +54,7 @@ public:
 	static void SpeedChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData);
 	static void BassChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData);
 	static void TrebleChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData);
+	static void MixChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData);
 
 protected:
 	// --------------------------------------------------------------------------

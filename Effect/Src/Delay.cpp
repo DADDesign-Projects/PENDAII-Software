@@ -41,12 +41,15 @@ namespace DadEffect {
 // --------------------------------------------------------------------------
 // Initializes parameters, UI, filters, buffers, and LFO
 void cDelay::Initialize(){
+	// ---------------- Volume Initialization ----------------
+	DadUI::cPendaUI::m_Volumes.BypassModeChange(DadMisc::eDryWetMode::DryAuto);
+	DadUI::cPendaUI::m_Volumes.MuteOn();
+	m_GainWet = 0;
 
 	// Member data Initialization ----------------------------------------------------------
 	m_MemMixDelay = 0.0f;		// Memorize MixDelay Value
 	m_MemVol1Left = 0.0f;		// Memorize Vol1Left
 	m_MemVol1Right = 0.0f;		// Memorize Vol1Right
-	m_GainWet = 0.0f;			// GainWet
 
 	m_BassFilter1.Initialize(SAMPLING_RATE, 100, 0.0f, 1.8f, DadDSP::FilterType::HPF);
 	m_TrebleFilter1.Initialize(SAMPLING_RATE, 1000, 0.0f, 1.8f, DadDSP::FilterType::LPF);
@@ -75,9 +78,9 @@ void cDelay::Initialize(){
 	m_Repeat.Init(30.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
 	            0.2f * UI_RT_SAMPLING_RATE, 21, DelaySerializeID);
 
-	// Mix delay 1
-	m_Mix.Init(10.0f, 0.0f, 100.0f, 5.0f, 1.0f, nullptr, 0,
-					 1.0f * UI_RT_SAMPLING_RATE, 22, DelaySerializeID);
+	// Total mix delay
+	m_Mix.Init(10.0f, 0.0f, 100.0f, 5.0f, 1.0f, MixChange, (uint32_t) this,
+					 0, 22, DelaySerializeID);
 	// Delay 2 ----------------------
 	// Subdivision of delay1
 	m_SubDelay.Init(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, nullptr, 0, 0, 23, DelaySerializeID);
@@ -165,6 +168,7 @@ void cDelay::Initialize(){
 	// LFO and Filters Initialization --------------------------------------------------------
 	m_LFO.Initialize(SAMPLING_RATE, 0.5, 1, 10, 0.5f);
 
+	// ---------------- Volume Initialization ----------------
 	DadUI::cPendaUI::m_Volumes.MuteOff();
 }
 
@@ -173,16 +177,6 @@ void cDelay::Initialize(){
 void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	m_LFO.Step();
 	m_ItemInputVolume.Process(pIn);		// Input volume VU-Meter
-
-	float Left;
-	float Right;
-	if(false == OnOff){
-		Left = 0.0f;
-		Right = 0.0f;
-	}else{
-		Left = pIn->Left;
-		Right = pIn->Right;
-	}
 
 	// Compute modulated delay time
 	float LFO1 =  m_LFO.getTriangleValue();
@@ -251,8 +245,8 @@ void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	OutRight = m_TrebleFilter1.Process(OutRight, DadDSP::eChannel::Right);
 	OutLeft  = m_TrebleFilter1.Process(OutLeft, DadDSP::eChannel::Left);
 
-	m_Delay1LineRight.Push((Right + OutRight) * m_Repeat/100);
-	m_Delay1LineLeft.Push((Left + OutLeft) * m_Repeat/100);
+	m_Delay1LineRight.Push((pIn->Right + OutRight) * m_Repeat/100);
+	m_Delay1LineLeft.Push((pIn->Left + OutLeft) * m_Repeat/100);
 
 	// --- Delay Processing 2 ---
 	float Out2Right;
@@ -271,8 +265,8 @@ void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	Out2Right = m_TrebleFilter2.Process(Out2Right, DadDSP::eChannel::Right);
 	Out2Left  = m_TrebleFilter2.Process(Out2Left, DadDSP::eChannel::Left);
 
-	m_Delay2LineRight.Push((Right + Out2Right) * m_RepeatDelay2/100);
-	m_Delay2LineLeft.Push((Left + Out2Left) * m_RepeatDelay2/100);
+	m_Delay2LineRight.Push((pIn->Right + Out2Right) * m_RepeatDelay2/100);
+	m_Delay2LineLeft.Push((pIn->Left + Out2Left) * m_RepeatDelay2/100);
 
 	// --- Delay1 ans Delay2  Blending ---
 	float mix = m_BlendD1D2 / 100.0f;
@@ -281,18 +275,11 @@ void cDelay::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 
 	OutRight = ((OutRight * gain1) + (Out2Right * gain2));
 	OutLeft  = ((OutLeft * gain1) + (Out2Left * gain2));
+
 #ifdef PENDAI
 	pOut->Right = OutRight;
 	pOut->Left  = OutLeft;
 #elif defined(PENDAII)
-	if( (m_MemMixDelay != m_Mix) ||
-		(m_MemVol1Left != DadUI::cPendaUI::m_Volumes.getVol1Left())||
-		(m_MemVol1Right != DadUI::cPendaUI::m_Volumes.getVol1Right())
-	   ){
-		m_GainWet = DadUI::cPendaUI::m_Volumes.MixDryWet(m_Mix);
-		m_MemMixDelay =  m_Mix;
-	}
-
 	pOut->Right = OutRight * m_GainWet;
 	pOut->Left  = OutLeft * m_GainWet;
 #endif
@@ -330,6 +317,13 @@ void cDelay::TrebleChange(DadUI::cParameter *pParameter, uint32_t CallbackUserDa
 	pthis->m_TrebleFilter1.CalculateParameters();
 	pthis->m_TrebleFilter2.setCutoffFreq(Freq);
 	pthis->m_TrebleFilter2.CalculateParameters();
+}
+
+// --------------------------------------------------------------------------
+// Callback to update the Mix parameter
+void cDelay::MixChange(DadUI::cParameter *pParameter, uint32_t CallbackUserData){
+	cDelay *pthis = reinterpret_cast<cDelay *>(CallbackUserData);
+	pthis->m_GainWet = DadUI::cPendaUI::m_Volumes.MixDryWet(*pParameter);
 }
 
 // --------------------------------------------------------------------------

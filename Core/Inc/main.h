@@ -156,6 +156,10 @@ struct AudioBuffer{
 	float Right;
 	float Left;
 };
+enum eOnOff{
+	Off = 0,
+	On
+};
 extern HAL_StatusTypeDef StartAudio();
 
 // =====** END DAD **=================================================================

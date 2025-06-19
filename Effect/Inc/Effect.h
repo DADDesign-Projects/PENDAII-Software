@@ -6,9 +6,9 @@
 // Copyright(c) 2025 Dad Design.
 //====================================================================================
 
-//#define PENDA_DELAY
-#define PENDA_TREMOLO
-
+#define PENDA_DELAY
+//#define PENDA_TREMOLO
+//#define PENDA_TEMPLATE
 
 // Configuring the PENDA Delay
 #ifdef PENDA_DELAY
@@ -26,3 +26,10 @@
 #define EFFECT_VERSION "Version 1.0"
 #endif
 
+// Configuring the PENDA Delay
+#ifdef PENDA_TEMPLATE
+#include "EffectTemplate.h"
+#define EFFECT DadEffect::cEffectTemplate
+#define EFFECT_NAME "Template"
+#define EFFECT_VERSION "Version 1.0"
+#endif

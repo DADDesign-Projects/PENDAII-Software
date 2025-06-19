@@ -350,10 +350,10 @@ void cUIMemory::IncrementSlot(int8_t Increment){
 // --------------------------------------------------------------------------
 // Function: OnOff
 void cUIMemory::OnOff(){
-	if(cPendaUI::m_AudioState){
-		cPendaUI::m_AudioState = false;
+	if(cPendaUI::m_AudioState == On){
+		cPendaUI::m_AudioState = Off;
 	}else{
-		cPendaUI::m_AudioState = true;
+		cPendaUI::m_AudioState = On;
 	}
 	drawMainDownDyn(); 	// Redraw dynamic UI elements
 }
@@ -540,10 +540,10 @@ void cUIMemory::MIDI_OnOff_CallBack(uint8_t control, uint8_t value, uint32_t use
 		return;
 		break;
 	case MIDI_ON:
-		cPendaUI::m_AudioState = true;
+		cPendaUI::m_AudioState = On;
 		break;
 	case MIDI_OFF :
-		cPendaUI::m_AudioState = false;
+		cPendaUI::m_AudioState = Off;
 		break;
 	}
 	pThis->drawMainDownDyn();

@@ -16,6 +16,7 @@ namespace DadMisc {
 // Enumeration representing the transmission states of the SPI interface
 enum class eTransState {
 	Stop,         // Transmission stopped
+	Start,		  // Start transmission
 	Cs_Down,      // Chip select goes low
 	Data_Change,  // Data bit is updated
 	Clk_Up,       // Clock signal goes high

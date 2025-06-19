@@ -34,6 +34,10 @@ namespace DadEffect {
 // --------------------------------------------------------------------------
 // Initializes UI parameters, LFO, delay buffers, and menu interface
 void cTremolo::Initialize(){
+	// ---------------- Volume Initialization ----------------
+	DadUI::cPendaUI::m_Volumes.BypassModeChange(DadMisc::eDryWetMode::DryAuto);
+	DadUI::cPendaUI::m_Volumes.MuteOn();
+	m_GainWet = 0;
 
 	// ---------------- Parameter Initialization ----------------
 
@@ -47,7 +51,7 @@ void cTremolo::Initialize(){
 	// Dry/Wet Mix
 #ifdef PENDAII
 	m_DryWetMix.Init(45.0f, 0.0f, 100.0f, 5.0f, 1.0f, MixChange, (uint32_t)this,
-	                   0.5f * UI_RT_SAMPLING_RATE, 22, TremoloSerializeID);
+	                   0, 22, TremoloSerializeID);
 #endif
 
 	// Vibrato Depth (used for delay-based pitch modulation)
@@ -113,6 +117,7 @@ void cTremolo::Initialize(){
 	m_ModulationLineLeft.Initialize(__ModulationBufferLeft, DELAY_BUFFER_SIZE);
 	m_ModulationLineLeft.Clear();
 
+	// ---------------- Volume Initialization ----------------
 	DadUI::cPendaUI::m_Volumes.MuteOff();
 }
 
@@ -122,16 +127,6 @@ void cTremolo::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	m_LFOLeft.Step(); // Update LFO phase
 	m_LFORight.Step();
 	m_ItemInputVolume.Process(pIn);		// Input volume VU-Meter
-
-	float Left;
-	float Right;
-	if(false == OnOff){
-		Left = 0.0f;
-		Right = 0.0f;
-	}else{
-		Left = pIn->Left;
-		Right = pIn->Right;
-	}
 
 	float VolumeModulationLeft = 0.0f;
 	float VolumeModulationRight = 0.0f;
@@ -163,8 +158,8 @@ void cTremolo::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	// and adjusted with a compensation factor to keep the vibrato range independent of LFO frequency.
 	float LFOSinLeft = m_LFOLeft.getSineValue();
 	float LFOSinRight = m_LFORight.getSineValue();
-	float DelayLeft;
-	float DelayRight;
+	float DelayLeft = 0.0f;
+	float DelayRight = 0.0f;
 
 	if((m_StereoMode == 0) || (m_StereoMode == 1)){
 		DelayLeft = DELAY_BUFFER_SIZE * LFOSinLeft * m_CoefComp * (m_VibratoDeep/100)  * 0.5f;
@@ -175,14 +170,14 @@ void cTremolo::Process(AudioBuffer *pIn, AudioBuffer *pOut, bool OnOff){
 	}
 
 	// Push current samples to delay line and read modulated delayed output
-	m_ModulationLineLeft.Push(Left);
-	m_ModulationLineRight.Push(Right);
+	m_ModulationLineLeft.Push(pIn->Left);
+	m_ModulationLineRight.Push(pIn->Right);
 #ifdef PENDAI
 	pOut->Left = m_ModulationLineLeft.Pull(DelayLeft) * VolumeModulationLeft;
 	pOut->Right = m_ModulationLineRight.Pull(DelayLeft) * VolumeModulationLeft;
 #elif defined(PENDAII)
-	pOut->Left = m_ModulationLineLeft.Pull(DelayLeft) * VolumeModulationLeft * m_GainWet;
-	pOut->Right = m_ModulationLineRight.Pull(DelayRight) * VolumeModulationRight * m_GainWet;
+	pOut->Left = m_ModulationLineLeft.Pull(DelayLeft) * VolumeModulationLeft * m_GainWet * 1.2f;
+	pOut->Right = m_ModulationLineRight.Pull(DelayRight) * VolumeModulationRight * m_GainWet * 1.2f;
 #endif
 }
 
