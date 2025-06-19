@@ -183,9 +183,10 @@
     SendData(0x17);
     SendData(0x1b);
     SendData(0x1e);
-
+#ifdef INV_COLOR
     SendCommand(ST7789_INVON);
     SendCommand(ST7789_INVON);
+#endif
     HAL_Delay(120);
 
     SendCommand(ST7789_DISPON);    //Display on

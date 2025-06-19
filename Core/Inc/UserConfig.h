@@ -23,6 +23,7 @@
 //-------------------------------------------------------------------------
 //#define TFT_COLOR 18            // Uncomment for 18-bit color mode
 #define TFT_COLOR 16              // Use 16-bit color mode (default)
+#define INV_COLOR 				  // Screen displays with inverted colors – remove/comment this if not needed"
 
 //-------------------------------------------------------------------------
 // Define the block size used for partial screen updates
@@ -36,6 +37,7 @@
 #define NB_BLOCS        NB_BLOC_WIDTH * NB_BLOC_HEIGHT // Total number of blocks
 #define BLOC_WIDTH      TFT_WIDTH / NB_BLOC_WIDTH      // Width of each block in pixels
 #define BLOC_HEIGHT     TFT_HEIGHT / NB_BLOC_HEIGHT    // Height of each block in pixels
+
 
 //-------------------------------------------------------------------------
 // FIFO size for SPI block transmission via DMA
